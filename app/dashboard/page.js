@@ -90,7 +90,6 @@ export default function TradeJournal() {
 
   };
 
-
   const deleteTrade = async (id) => {
 
     console.log(id, "hjsdgfhjd");
@@ -127,8 +126,6 @@ export default function TradeJournal() {
     }
   };
 
-
-
   const updateTrade = (id, field, value) => {
     setTrades(trades.map(t => t.id === id ? { ...t, [field]: value } : t));
   };
@@ -147,10 +144,6 @@ export default function TradeJournal() {
     };
     return colors[type] || 'bg-gray-500';
   };
-
-
-
-
 
   const calculatePnL = (trade) => {
     if (!trade?.exitPrice) return null;
@@ -171,9 +164,6 @@ export default function TradeJournal() {
       setCurrentPage(page);
     }
   };
-
-
-
 
   const downloadExcel = () => {
     const sourceTrades = msg ?? [];
@@ -235,13 +225,10 @@ export default function TradeJournal() {
     // Generate filename with current date
     const filename = `trade-journal-${new Date().toISOString().split('T')[0]}.xlsx`;
 
-    // Download file
     XLSX.writeFile(wb, filename);
   };
 
   // get request data from the backend
-
-
   useEffect(() => {
     fetch("http://localhost:5000/api/trades")
       .then(res => res.json())
@@ -317,7 +304,7 @@ export default function TradeJournal() {
               gradient: "from-orange-500/20 to-amber-500/20"
             }
           ].map((stat, index) => (
-            <div 
+            <div
               key={index}
               className={`bg-gradient-to-br ${stat.gradient} backdrop-blur-lg border border-slate-700/50 rounded-2xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-2xl`}
             >
@@ -325,19 +312,19 @@ export default function TradeJournal() {
                 <div>
                   <p className="text-slate-300 text-sm font-medium mb-2">{stat.label}</p>
                   <p className={`text-4xl font-bold ${stat.color === 'blue' ? 'text-blue-400' :
-                      stat.color === 'green' ? 'text-green-400' :
-                        stat.color === 'red' ? 'text-red-400' :
-                          stat.color === 'purple' ? 'text-purple-400' :
-                            'text-orange-400'
+                    stat.color === 'green' ? 'text-green-400' :
+                      stat.color === 'red' ? 'text-red-400' :
+                        stat.color === 'purple' ? 'text-purple-400' :
+                          'text-orange-400'
                     }`}>
                     {stat.value}
                   </p>
                 </div>
                 <div className={`p-3 rounded-xl bg-slate-800/30 backdrop-blur-sm ${stat.color === 'blue' ? 'text-blue-400' :
-                    stat.color === 'green' ? 'text-green-400' :
-                      stat.color === 'red' ? 'text-red-400' :
-                        stat.color === 'purple' ? 'text-purple-400' :
-                          'text-orange-400'
+                  stat.color === 'green' ? 'text-green-400' :
+                    stat.color === 'red' ? 'text-red-400' :
+                      stat.color === 'purple' ? 'text-purple-400' :
+                        'text-orange-400'
                   }`}>
                   <stat.icon size={28} />
                 </div>
@@ -358,8 +345,8 @@ export default function TradeJournal() {
                 key={type}
                 onClick={() => setFilterType(type)}
                 className={`px-5 py-2.5 rounded-xl capitalize transition-all duration-300 font-medium ${filterType === type
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
-                    : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:scale-105'
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                  : 'bg-slate-700/50 text-slate-300 hover:bg-slate-600/50 hover:scale-105'
                   }`}
               >
                 {type}
@@ -387,8 +374,8 @@ export default function TradeJournal() {
             currentTrades?.map(trade => {
               const pnl = calculatePnL(trade);
 
-              console.log(pnl , "pnlpnlpnl");
-              
+              console.log(pnl, "pnlpnlpnl");
+
 
               return (
                 <div
@@ -406,8 +393,8 @@ export default function TradeJournal() {
                           {trade.symbol}
                         </span>
                         <span className={`px-3 py-1.5 rounded-full text-xs font-bold ${trade.action === 'buy'
-                            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                            : 'bg-red-500/20 text-red-400 border border-red-500/30'
+                          ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                          : 'bg-red-500/20 text-red-400 border border-red-500/30'
                           }`}>
                           {trade.action.toUpperCase()}
                         </span>
@@ -425,7 +412,7 @@ export default function TradeJournal() {
                             label: "Exit Price",
                             value: trade.exitPrice ? `₹${trade.exitPrice}` : (
                               <input
-                                type="number" 
+                                type="number"
                                 placeholder="Open"
                                 className="bg-slate-700/50 border border-slate-600/50 px-3 py-1.5 rounded-lg w-28 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500/50"
                                 onBlur={(e) => e.target.value && updateTrade(trade.id, 'exitPrice', e.target.value)}
@@ -455,8 +442,8 @@ export default function TradeJournal() {
                     <div className="flex flex-col items-end justify-between gap-4 min-w-[140px]">
                       {pnl !== null && (
                         <div className={`text-right ${pnl >= 0
-                            ? 'text-green-400'
-                            : 'text-red-400'
+                          ? 'text-green-400'
+                          : 'text-red-400'
                           }`}>
                           <p className="text-sm font-medium text-slate-400">P&L</p>
                           <p className="text-3xl font-bold tracking-tight">
@@ -502,8 +489,8 @@ export default function TradeJournal() {
                     key={page}
                     onClick={() => goToPage(page)}
                     className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${currentPage === page
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
-                        : 'bg-slate-700/30 text-slate-300 hover:bg-slate-600/30'
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg scale-105'
+                      : 'bg-slate-700/30 text-slate-300 hover:bg-slate-600/30'
                       }`}
                   >
                     {page}
@@ -524,268 +511,267 @@ export default function TradeJournal() {
         )}
 
         {/* Enhanced Add Trade Modal */}
-       
-       
+
+
         {showModal && (
-  <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-4 z-50 animate-fadeIn">
-    <div
-      className="bg-slate-800/95 border border-slate-700/60 rounded-3xl p-6 max-w-2xl w-full max-h-[95vh] overflow-y-auto shadow-2xl animate-slideUp"
-      onClick={(e) => e.stopPropagation()}
-    >
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-700/50">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3">
-            <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-              <Plus size={16} className="text-white" />
-            </div>
-            <h2 className="text-xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
-              New Trade Entry
-            </h2>
-          </div>
-          <p className="text-slate-400 text-xs ml-10">Track your trading performance</p>
-        </div>
-        <button
-          onClick={() => setShowModal(false)}
-          className="p-1.5 hover:bg-slate-700/50 rounded-xl transition-all duration-300 hover:scale-110 group"
-        >
-          <X size={18} className="text-slate-400 group-hover:text-white" />
-        </button>
-      </div>
-
-      {/* Progress Steps */}
-      <div className="flex items-center justify-between mb-6 relative">
-        {['Basic', 'Details', 'Review'].map((step, index) => (
-          <div key={step} className="flex flex-col items-center z-10">
-            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${index === 0
-                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                : 'bg-slate-700/50 text-slate-400'
-              }`}>
-              {index + 1}
-            </div>
-            <span className={`text-xs mt-1 font-medium ${index === 0 ? 'text-blue-400' : 'text-slate-500'
-              }`}>
-              {step}
-            </span>
-          </div>
-        ))}
-        <div className="absolute top-3.5 left-4 right-4 h-0.5 bg-slate-700/50 -z-10">
-          <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-1/3 transition-all duration-500"></div>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {/* Row 1: Trade Type, Symbol, Action */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="space-y-1">
-            <label className="block text-xs text-slate-300 font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
-              Trade Type
-            </label>
-            <select
-              value={newTrade.type}
-              onChange={(e) => setNewTrade({ ...newTrade, type: e.target.value })}
-              className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 appearance-none cursor-pointer text-sm"
+          <div className="fixed inset-0 bg-black/80 backdrop-blur-lg flex items-center justify-center p-4 z-50 animate-fadeIn">
+            <div
+              className="bg-slate-800/95 border border-slate-700/60 rounded-3xl p-6 max-w-2xl w-full max-h-[95vh] overflow-y-auto shadow-2xl animate-slideUp"
+              onClick={(e) => e.stopPropagation()}
             >
-              <option value="crypto" className="bg-slate-800">💰 Crypto</option>
-              <option value="stock" className="bg-slate-800">📈 Stock</option>
-              <option value="nifty" className="bg-slate-800">🌍 Nifty</option>
-              <option value="options" className="bg-slate-800">⚡ Options</option>
-              <option value="swing" className="bg-slate-800">🔄 Swing</option>
-            </select>
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-xs text-slate-300 font-semibold flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
-              Symbol
-            </label>
-            <input
-              type="text"
-              placeholder="BTC, AAPL..."
-              value={newTrade.symbol}
-              onChange={(e) => setNewTrade({ ...newTrade, symbol: e.target.value.toUpperCase() })}
-              className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300 text-sm"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="block text-xs text-slate-300 font-semibold">Action</label>
-            <div className="grid grid-cols-2 gap-1.5">
-              {[
-                { value: 'buy', label: 'Buy', color: 'bg-green-500/20 border-green-500/50 text-green-400' },
-                { value: 'sell', label: 'Sell', color: 'bg-red-500/20 border-red-500/50 text-red-400' }
-              ].map((action) => (
+              {/* Header */}
+              <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-700/50">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-3">
+                    <div className="w-7 h-7 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                      <Plus size={16} className="text-white" />
+                    </div>
+                    <h2 className="text-xl font-bold bg-gradient-to-r from-white to-slate-200 bg-clip-text text-transparent">
+                      New Trade Entry
+                    </h2>
+                  </div>
+                  <p className="text-slate-400 text-xs ml-10">Track your trading performance</p>
+                </div>
                 <button
-                  key={action.value}
-                  type="button"
-                  onClick={() => setNewTrade({ ...newTrade, action: action.value })}
-                  className={`py-2 rounded-lg border transition-all duration-300 font-semibold text-sm ${newTrade.action === action.value
-                      ? `${action.color} scale-105 shadow-lg`
-                      : 'bg-slate-700/50 border-slate-600/50 text-slate-300 hover:bg-slate-600/50'
-                    }`}
+                  onClick={() => setShowModal(false)}
+                  className="p-1.5 hover:bg-slate-700/50 rounded-xl transition-all duration-300 hover:scale-110 group"
                 >
-                  {action.label}
+                  <X size={18} className="text-slate-400 group-hover:text-white" />
                 </button>
-              ))}
+              </div>
+
+              {/* Progress Steps */}
+              <div className="flex items-center justify-between mb-6 relative">
+                {['Basic', 'Details', 'Review'].map((step, index) => (
+                  <div key={step} className="flex flex-col items-center z-10">
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all duration-300 ${index === 0
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
+                      : 'bg-slate-700/50 text-slate-400'
+                      }`}>
+                      {index + 1}
+                    </div>
+                    <span className={`text-xs mt-1 font-medium ${index === 0 ? 'text-blue-400' : 'text-slate-500'
+                      }`}>
+                      {step}
+                    </span>
+                  </div>
+                ))}
+                <div className="absolute top-3.5 left-4 right-4 h-0.5 bg-slate-700/50 -z-10">
+                  <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 w-1/3 transition-all duration-500"></div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                {/* Row 1: Trade Type, Symbol, Action */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="block text-xs text-slate-300 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span>
+                      Trade Type
+                    </label>
+                    <select
+                      value={newTrade.type}
+                      onChange={(e) => setNewTrade({ ...newTrade, type: e.target.value })}
+                      className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 appearance-none cursor-pointer text-sm"
+                    >
+                      <option value="crypto" className="bg-slate-800">💰 Crypto</option>
+                      <option value="stock" className="bg-slate-800">📈 Stock</option>
+                      <option value="nifty" className="bg-slate-800">🌍 Nifty</option>
+                      <option value="options" className="bg-slate-800">⚡ Options</option>
+                      <option value="swing" className="bg-slate-800">🔄 Swing</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-xs text-slate-300 font-semibold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                      Symbol
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="BTC, AAPL..."
+                      value={newTrade.symbol}
+                      onChange={(e) => setNewTrade({ ...newTrade, symbol: e.target.value.toUpperCase() })}
+                      className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300 text-sm"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="block text-xs text-slate-300 font-semibold">Action</label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[
+                        { value: 'buy', label: 'Buy', color: 'bg-green-500/20 border-green-500/50 text-green-400' },
+                        { value: 'sell', label: 'Sell', color: 'bg-red-500/20 border-red-500/50 text-red-400' }
+                      ].map((action) => (
+                        <button
+                          key={action.value}
+                          type="button"
+                          onClick={() => setNewTrade({ ...newTrade, action: action.value })}
+                          className={`py-2 rounded-lg border transition-all duration-300 font-semibold text-sm ${newTrade.action === action.value
+                            ? `${action.color} scale-105 shadow-lg`
+                            : 'bg-slate-700/50 border-slate-600/50 text-slate-300 hover:bg-slate-600/50'
+                            }`}
+                        >
+                          {action.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Row 2: Strategy, Quantity, Entry Price */}
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1">
+                    <label className="block text-xs text-slate-300 font-semibold">Strategy</label>
+                    <select
+                      value={newTrade.strategy}
+                      onChange={(e) => setNewTrade({ ...newTrade, strategy: e.target.value })}
+                      className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all duration-300 appearance-none cursor-pointer text-sm capitalize"
+                    >
+                      <option value="swing" className="bg-slate-800">🔄 Swing</option>
+                      <option value="day" className="bg-slate-800">📊 Day</option>
+                      <option value="scalp" className="bg-slate-800">⚡ Scalp</option>
+                      <option value="position" className="bg-slate-800">🎯 Position</option>
+                    </select>
+                  </div>
+
+                  {[
+                    {
+                      label: "Quantity",
+                      type: "number",
+                      placeholder: "100",
+                      value: newTrade.quantity,
+                      onChange: (e) => setNewTrade({ ...newTrade, quantity: e.target.value }),
+                      icon: "🔢"
+                    },
+                    {
+                      label: "Entry Price",
+                      type: "number",
+                      placeholder: "0.00",
+                      value: newTrade.entryPrice,
+                      onChange: (e) => setNewTrade({ ...newTrade, entryPrice: e.target.value }),
+                      icon: "💰"
+                    }
+                  ].map((field, index) => (
+                    <div key={index} className="space-y-1">
+                      <label className="block text-xs text-slate-300 font-semibold">{field.icon} {field.label}</label>
+                      <input
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        value={field.value}
+                        onChange={field.onChange}
+                        min="0"
+                        className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 text-sm"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Row 3: Exit Price, Date, Quick Actions */}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    {
+                      label: "Exit Price",
+                      type: "number",
+                      placeholder: "0.00",
+                      value: newTrade.exitPrice,
+                      onChange: (e) => setNewTrade({ ...newTrade, exitPrice: e.target.value }),
+                      icon: "🎯",
+                      optional: true
+                    },
+                    {
+                      label: "Trade Date",
+                      type: "date",
+                      value: newTrade.date,
+                      onChange: (e) => setNewTrade({ ...newTrade, date: e.target.value }),
+                      icon: "📅"
+                    }
+                  ].map((field, index) => (
+                    <div key={index} className="space-y-1">
+                      <label className="block text-xs text-slate-300 font-semibold">
+                        {field.icon} {field.label}
+                        {field.optional && <span className="text-slate-500 text-xs ml-1">(Opt)</span>}
+                      </label>
+                      <input
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        value={field.value}
+                        onChange={field.onChange}
+                        min="0"
+                        className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300 text-sm"
+                      />
+                    </div>
+                  ))}
+
+                  {/* Quick Actions in the third column */}
+                  <div className="space-y-1">
+                    <label className="block text-xs text-slate-300 font-semibold">💡 Quick Date</label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      {[
+                        { label: 'Today', date: new Date().toISOString().split('T')[0] },
+                        { label: 'Yesterday', date: new Date(Date.now() - 86400000).toISOString().split('T')[0] }
+                      ].map((action) => (
+                        <button
+                          key={action.label}
+                          type="button"
+                          onClick={() => setNewTrade({ ...newTrade, date: action.date })}
+                          className="py-1.5 text-xs bg-slate-600/30 hover:bg-slate-600/50 rounded transition-colors duration-300 text-slate-300 hover:text-white border border-slate-600/50"
+                        >
+                          {action.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Notes - Full width but compact */}
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-xs text-slate-300 font-semibold">📝 Trade Notes</label>
+                    <span className="text-xs text-slate-500">
+                      {newTrade.notes?.length || 0}/150
+                    </span>
+                  </div>
+                  <textarea
+                    placeholder="Trade rationale, market conditions, lessons..."
+                    value={newTrade.notes}
+                    onChange={(e) => {
+                      if (e.target.value.length <= 150) {
+                        setNewTrade({ ...newTrade, notes: e.target.value })
+                      }
+                    }}
+                    className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all duration-300 h-20 resize-none text-sm"
+                  />
+                  <div className="flex justify-between text-xs text-slate-500">
+                    <span>Optional for learning</span>
+                    <span>{150 - (newTrade.notes?.length || 0)} left</span>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="flex-1 py-2.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-slate-600/50 hover:border-slate-500/50 text-sm"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={addTrade}
+                    disabled={!newTrade.symbol || !newTrade.quantity || !newTrade.entryPrice}
+                    className="flex-1 py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100 group text-sm"
+                  >
+                    <div className="flex items-center justify-center gap-1">
+                      <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
+                      <span>Add Trade</span>
+                    </div>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        {/* Row 2: Strategy, Quantity, Entry Price */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="space-y-1">
-            <label className="block text-xs text-slate-300 font-semibold">Strategy</label>
-            <select
-              value={newTrade.strategy}
-              onChange={(e) => setNewTrade({ ...newTrade, strategy: e.target.value })}
-              className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all duration-300 appearance-none cursor-pointer text-sm capitalize"
-            >
-              <option value="swing" className="bg-slate-800">🔄 Swing</option>
-              <option value="day" className="bg-slate-800">📊 Day</option>
-              <option value="scalp" className="bg-slate-800">⚡ Scalp</option>
-              <option value="position" className="bg-slate-800">🎯 Position</option>
-            </select>
-          </div>
-
-          {[
-            {
-              label: "Quantity",
-              type: "number",
-              placeholder: "100",
-              value: newTrade.quantity,
-              onChange: (e) => setNewTrade({ ...newTrade, quantity: e.target.value }),
-              icon: "🔢"
-            },
-            {
-              label: "Entry Price",
-              type: "number",
-              placeholder: "0.00",
-              value: newTrade.entryPrice,
-              onChange: (e) => setNewTrade({ ...newTrade, entryPrice: e.target.value }),
-              icon: "💰"
-            }
-          ].map((field, index) => (
-            <div key={index} className="space-y-1">
-              <label className="block text-xs text-slate-300 font-semibold">{field.icon} {field.label}</label>
-              <input
-                type={field.type}
-                placeholder={field.placeholder}
-                value={field.value}
-                onChange={field.onChange}
-                min="0"
-                className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-300 text-sm"
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Row 3: Exit Price, Date, Quick Actions */}
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            {
-              label: "Exit Price",
-              type: "number",
-              placeholder: "0.00",
-              value: newTrade.exitPrice,
-              onChange: (e) => setNewTrade({ ...newTrade, exitPrice: e.target.value }),
-              icon: "🎯",
-              optional: true
-            },
-            {
-              label: "Trade Date",
-              type: "date",
-              value: newTrade.date,
-              onChange: (e) => setNewTrade({ ...newTrade, date: e.target.value }),
-              icon: "📅"
-            }
-          ].map((field, index) => (
-            <div key={index} className="space-y-1">
-              <label className="block text-xs text-slate-300 font-semibold">
-                {field.icon} {field.label}
-                {field.optional && <span className="text-slate-500 text-xs ml-1">(Opt)</span>}
-              </label>
-              <input
-                type={field.type}
-                placeholder={field.placeholder}
-                value={field.value}
-                onChange={field.onChange}
-                min="0"
-                className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-purple-500/50 focus:border-purple-500/50 transition-all duration-300 text-sm"
-              />
-            </div>
-          ))}
-
-          {/* Quick Actions in the third column */}
-          <div className="space-y-1">
-            <label className="block text-xs text-slate-300 font-semibold">💡 Quick Date</label>
-            <div className="grid grid-cols-2 gap-1.5">
-              {[
-                { label: 'Today', date: new Date().toISOString().split('T')[0] },
-                { label: 'Yesterday', date: new Date(Date.now() - 86400000).toISOString().split('T')[0] }
-              ].map((action) => (
-                <button
-                  key={action.label}
-                  type="button"
-                  onClick={() => setNewTrade({ ...newTrade, date: action.date })}
-                  className="py-1.5 text-xs bg-slate-600/30 hover:bg-slate-600/50 rounded transition-colors duration-300 text-slate-300 hover:text-white border border-slate-600/50"
-                >
-                  {action.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Notes - Full width but compact */}
-        <div className="space-y-1">
-          <div className="flex items-center justify-between">
-            <label className="block text-xs text-slate-300 font-semibold">📝 Trade Notes</label>
-            <span className="text-xs text-slate-500">
-              {newTrade.notes?.length || 0}/150
-            </span>
-          </div>
-          <textarea
-            placeholder="Trade rationale, market conditions, lessons..."
-            value={newTrade.notes}
-            onChange={(e) => {
-              if (e.target.value.length <= 150) {
-                setNewTrade({ ...newTrade, notes: e.target.value })
-              }
-            }}
-            className="w-full bg-slate-700/60 border border-slate-600/50 rounded-lg px-3 py-2.5 text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-cyan-500/50 focus:border-cyan-500/50 transition-all duration-300 h-20 resize-none text-sm"
-          />
-          <div className="flex justify-between text-xs text-slate-500">
-            <span>Optional for learning</span>
-            <span>{150 - (newTrade.notes?.length || 0)} left</span>
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-2">
-          <button
-            onClick={() => setShowModal(false)}
-            className="flex-1 py-2.5 bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white rounded-lg font-semibold transition-all duration-300 border border-slate-600/50 hover:border-slate-500/50 text-sm"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={addTrade}
-            disabled={!newTrade.symbol || !newTrade.quantity || !newTrade.entryPrice}
-            className="flex-1 py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100 group text-sm"
-          >
-            <div className="flex items-center justify-center gap-1">
-              <Plus size={16} className="group-hover:rotate-90 transition-transform duration-300" />
-              <span>Add Trade</span>
-            </div>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+        )}
       </div>
     </div>
   );
-
 }
