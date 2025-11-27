@@ -1,5 +1,5 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Plus, TrendingUp, TrendingDown, DollarSign, IndianRupee, Calendar, Filter, X, Download, Trash2 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { ChevronLeft, ChevronRight } from 'lucide-react'; // or your icon library
@@ -9,6 +9,8 @@ export default function TradeJournal() {
   const [filterType, setFilterType] = useState('all');
   const [stats, setStats] = useState({ total: 0, profit: 0, loss: 0, winRate: 0 });
   const [msg, setMsg] = useState([]);
+  const [snackbar, setSnackbar] = useState(null);
+  const snackbarTimeout = useRef(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const tradesPerPage = 2; // change value to show more/less per page
@@ -33,6 +35,22 @@ export default function TradeJournal() {
     calculateStats();
   }, [msg]);
 
+  useEffect(() => {
+    return () => {
+      if (snackbarTimeout.current) {
+        clearTimeout(snackbarTimeout.current);
+      }
+    };
+  }, []);
+
+  const showSnackbar = (message, type = 'success') => {
+    if (snackbarTimeout.current) {
+      clearTimeout(snackbarTimeout.current);
+    }
+    setSnackbar({ message, type });
+    snackbarTimeout.current = setTimeout(() => setSnackbar(null), 3000);
+  };
+
   const calculateStats = () => {
     const completed = (msg ?? []).filter(t => t.exitPrice);
     const total = completed.length;
@@ -56,7 +74,6 @@ export default function TradeJournal() {
       winRate: total > 0 ? ((wins / total) * 100).toFixed(1) : 0
     });
   };
-
 
   const addTrade = async () => {
     if (!newTrade.symbol || !newTrade.quantity || !newTrade.entryPrice) return;
@@ -120,9 +137,19 @@ export default function TradeJournal() {
         return currentId !== tradeId;
       }));
 
+      showSnackbar('Do you want to delete trade');
     } catch (error) {
       console.error('Delete trade error:', error);
-      alert(`Unable to delete trade: ${error.message}`);
+      showSnackbar(`Unable to delete trade: ${error.message}`, 'error');
+    }
+  };
+
+  const confirmAndDeleteTrade = (tradeId) => {
+    const shouldDelete = window.confirm('Do you want to delete trade?');
+    if (shouldDelete) {
+      deleteTrade(tradeId);
+    } else {
+      showSnackbar('Delete cancelled', 'info');
     }
   };
 
@@ -454,7 +481,7 @@ export default function TradeJournal() {
                         </div>
                       )}
                       <button
-                        onClick={() => deleteTrade(trade._id)}
+                        onClick={() => confirmAndDeleteTrade(trade._id)}
                         className="flex items-center gap-2 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 px-4 py-2.5 rounded-xl transition-all duration-300 border border-red-500/20 hover:border-red-500/40 group"
                         title="Delete trade"
                       >
@@ -769,6 +796,17 @@ export default function TradeJournal() {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+        {snackbar && (
+          <div
+            className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl shadow-2xl border text-sm font-semibold transition-all duration-300 z-50 ${
+              snackbar.type === 'error'
+                ? 'bg-red-500/90 border-red-400/70 text-white'
+                : 'bg-emerald-500/90 border-emerald-400/70 text-white'
+            }`}
+          >
+            {snackbar.message}
           </div>
         )}
       </div>
