@@ -78,33 +78,49 @@ export default function TradeJournal() {
   const addTrade = async () => {
     if (!newTrade.symbol || !newTrade.quantity || !newTrade.entryPrice) return;
 
-    setTrades([...trades, { ...newTrade, id: Date.now() }]);
-    setNewTrade({
-      type: 'crypto',
-      symbol: '',
-      action: 'buy',
-      quantity: '',
-      entryPrice: '',
-      exitPrice: '',
-      date: new Date().toISOString().split('T')[0],
-      notes: '',
-      strategy: 'swing'
-    });
-    setShowModal(false);
+    try {
+      const res = await fetch("http://localhost:5000/api/trades", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newTrade)
+      });
 
-    console.log(newTrade, " trades");
+      const data = await res.json();
 
-    const res = await fetch("http://localhost:5000/api/trades", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(newTrade)
-    });
+      if (data.success) {
+        // Reset form
+        setNewTrade({
+          type: 'crypto',
+          symbol: '',
+          action: 'buy',
+          quantity: '',
+          entryPrice: '',
+          exitPrice: '',
+          date: new Date().toISOString().split('T')[0],
+          notes: '',
+          strategy: 'swing'
+        });
+        setShowModal(false);
 
-    const data = await res.json();
-    console.log(data, " main code is here to start working");
+        // Fetch updated trades list to update the UI
+        const fetchRes = await fetch("http://localhost:5000/api/trades");
+        const fetchData = await fetchRes.json();
+        if (fetchData.success) {
+          setMsg(fetchData.data);
+          // Reset to first page to show the newly added trade
+          setCurrentPage(1);
+        }
 
+        showSnackbar('Trade added successfully!', 'success');
+      } else {
+        showSnackbar(`Failed to add trade: ${data.message}`, 'error');
+      }
+    } catch (error) {
+      console.error('Add trade error:', error);
+      showSnackbar(`Unable to add trade: ${error.message}`, 'error');
+    }
   };
 
   const deleteTrade = async (id) => {
@@ -138,7 +154,7 @@ export default function TradeJournal() {
       }));
 
       showSnackbar('Do you want to delete trade');
-    } catch (error) {
+    } catch (error) { 
       console.error('Delete trade error:', error);
       showSnackbar(`Unable to delete trade: ${error.message}`, 'error');
     }
@@ -157,9 +173,15 @@ export default function TradeJournal() {
     setTrades(trades.map(t => t.id === id ? { ...t, [field]: value } : t));
   };
 
-  const filteredTrades = filterType === 'all'
+  const filteredTrades = (filterType === 'all'
     ? (msg ?? [])
-    : (msg ?? []).filter(t => t.type === filterType);
+    : (msg ?? []).filter(t => t.type === filterType)
+  ).sort((a, b) => {
+    // Sort by createdAt in descending order (newest first)
+    const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+    const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+    return dateB - dateA; // Descending order (newest first)
+  });
 
   const getTypeColor = (type) => {
     const colors = {
@@ -409,7 +431,7 @@ export default function TradeJournal() {
                   key={trade.id}
                   className="group bg-slate-800/30  backdrop-blur border border-slate-700/50 rounded-2xl p-6 hover:border-slate-600/50 hover:bg-slate-700/30 transition-all duration-300 hover:shadow-xl"
                 >
-                  <div className="flex flex-col lg:flex-row justify-between gap-6">
+                  <div className="flex flex-col lg:flex-row justify-between gap-6 ">
                     <div className="flex-1 space-y-4">
                       {/* Trade Header */}
                       <div className="flex items-center gap-3 flex-wrap">
@@ -431,7 +453,7 @@ export default function TradeJournal() {
                       </div>
 
                       {/* Trade Details Grid */}
-                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                      <div className="grid grid-cols-2 lg:grid-cols-5 gap-6">
                         {[
                           { label: "Quantity", value: trade.quantity },
                           { label: "Entry Price", value: `₹${trade.entryPrice}` },
@@ -446,7 +468,20 @@ export default function TradeJournal() {
                               />
                             )
                           },
-                          { label: "Date", value: trade.date }
+                          { label: "Date", value: trade.date },
+                          {
+                            label: "Added At",
+                            value: trade.createdAt
+                              ? new Date(trade.createdAt).toLocaleString('en-IN', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                              })
+                              : 'N/A'
+                          }
                         ].map((item, index) => (
                           <div key={index}>
                             <p className="text-slate-400 text-sm font-medium mb-1">{item.label}</p>
@@ -454,8 +489,6 @@ export default function TradeJournal() {
                           </div>
                         ))}
                       </div>
-
-
 
                       {/* Notes */}
                       {trade.notes && (
@@ -474,7 +507,7 @@ export default function TradeJournal() {
                           }`}>
                           <p className="text-sm font-medium text-slate-400">P&L</p>
                           <p className="text-3xl font-bold tracking-tight">
-                            ${pnl.toFixed(2)}
+                            ₹{pnl.toFixed(2)}
                           </p>
                           <div className={`w-12 h-1 rounded-full mt-2 ${pnl >= 0 ? 'bg-green-400' : 'bg-red-400'
                             }`}></div>
@@ -784,6 +817,7 @@ export default function TradeJournal() {
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={addTrade}
                     disabled={!newTrade.symbol || !newTrade.quantity || !newTrade.entryPrice}
                     className="flex-1 py-2.5 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105 disabled:hover:scale-100 group text-sm"
@@ -800,11 +834,10 @@ export default function TradeJournal() {
         )}
         {snackbar && (
           <div
-            className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl shadow-2xl border text-sm font-semibold transition-all duration-300 z-50 ${
-              snackbar.type === 'error'
+            className={`fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl shadow-2xl border text-sm font-semibold transition-all duration-300 z-50 ${snackbar.type === 'error'
                 ? 'bg-red-500/90 border-red-400/70 text-white'
                 : 'bg-emerald-500/90 border-emerald-400/70 text-white'
-            }`}
+              }`}
           >
             {snackbar.message}
           </div>
