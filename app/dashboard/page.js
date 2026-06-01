@@ -79,7 +79,7 @@ export default function TradeJournal() {
     if (!newTrade.symbol || !newTrade.quantity || !newTrade.entryPrice) return;
 
     try {
-      const res = await fetch("http://localhost:5000/api/trades", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/trades`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -105,7 +105,7 @@ export default function TradeJournal() {
         setShowModal(false);
 
         // Fetch updated trades list to update the UI
-        const fetchRes = await fetch("http://localhost:5000/api/trades");
+        const fetchRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/trades`);
         const fetchData = await fetchRes.json();
         if (fetchData.success) {
           setMsg(fetchData.data);
