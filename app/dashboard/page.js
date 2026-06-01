@@ -279,7 +279,7 @@ export default function TradeJournal() {
 
   // get request data from the backend
   useEffect(() => {
-    fetch("http://localhost:5000/api/trades")
+    fetch(`${process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}/api/trades`)
       .then(res => res.json())
       .then(data => setMsg(data.data))
       .catch(err => console.log(err));
