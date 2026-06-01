@@ -130,7 +130,7 @@ export default function TradeJournal() {
     try {
       const tradeId = id._id || id;
 
-      const response = await fetch(`process.env.NEXT_PUBLIC_API_URL/api/trades/${tradeId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/trades/${tradeId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json'
